@@ -3,6 +3,7 @@ import sys
 import os
 import urllib.request
 from googlesearch import search
+from googlesearch import search_images
 from bs4 import BeautifulSoup
 from beautifultable import BeautifulTable
 from urllib.parse import urlparse
@@ -28,13 +29,22 @@ def convert_size(size_bytes):
 parser = argparse.ArgumentParser(description='Download Movie from commandline')
 parser.add_argument('-n', action='store', dest='name',
                     help='name of movie', type=str, required='true')
+parser.add_argument('-we', action='store', dest='websiteEnter',
+                    help='(default is 1) if u choose higher it get slower but chance of finding a link increse',type=int ,default=1)
 parser.add_argument('-k', action='store', dest='kind',
                     help='movie / series Note:series is unavailble now', type=str, default='movie')
+parser.add_argument('-gc',action='store', dest='getcover',
+                    help='download cover (default is FALSE)' ,type=bool , default=0)
 parser.add_argument('-q', action='store', dest='quality',
                     help='quality (480/720/1080)', type=str, default='')
 
 argResult = parser.parse_args()
-searchQuery = "دانلود فیلم"+argResult.name
+if argResult.kind =="movie":
+    searchQuery = "دانلود فیلم"+argResult.name
+    imgSearchQuery = "official cover for movie "+argResult.name
+elif argResult.kind == "series":
+    searchQuery = "دانلود سریال "+argResult.name
+    imgSearchQuery = "official cover for series "+argResult.name
 
 if argResult.quality:
     argResult.quality += "p"
@@ -50,13 +60,11 @@ linksDicMovie = {}
 
 movieTable.column_headers = ['id', 'website', 'link', 'space']
 
-spinner = PixelSpinner('Listing Links ')
+spinner = PixelSpinner('Searching ... ')
 if argResult.kind == "movie":
-    for url in search(searchQuery, num=1, start=0, stop=4, lang='fa', only_standard=True):
+    for url in search(searchQuery, num=1, start=0, stop=argResult.websiteEnter, lang='fa', only_standard=True):
         spinner.next()
-        print("website number"+ str(websitenumber))
         websiteUrlDetail = urlparse(url)
-        websitenumber += 1
         try:
             requestToUrl = urllib.request.urlopen(url).read()
         except urllib.error.HTTPError as error:
@@ -72,22 +80,51 @@ if argResult.kind == "movie":
                     linksDicMovie.update({linkNumber: link['href']})
                     linkNumber += 1
 
-    print("")    
-    print(movieTable)
-    userSelectedLinkId = int(input("enter link id :"))
-    filename = linksDicMovie[userSelectedLinkId].rsplit('/')[-1]
-    print("preparing to download : "+linksDicMovie[userSelectedLinkId])
-    print("checking if file already exit")
-    if os.path.isfile(filename):
-        print('file already exist')
-    else:
-        obj = SmartDL(linksDicMovie[userSelectedLinkId], currentPath)
-        obj.start()
-        dlMoviePath = obj.get_dest()
-        if os.path.isfile(dlMoviePath):
-            print("file saved in  "+dlMoviePath)
+    # TODO: make get cover happen
+    # if argResult.getcover:
+    #     for url in search_images(imgSearchQuery, tld='com', lang='en', tbs='0', safe='off', num=1, start=0, stop=1, domains=None, only_standard=False):
+    #         print(url)
+    # else:
+    #     pass
+    print("") 
+    if not linksDicMovie:
+        print("Nothing found ! Check your spelling and use higher -we .")
+    else:   
+        print(movieTable)
+        userSelectedLinkId = int(input("enter link id :"))
+        filename = linksDicMovie[userSelectedLinkId].rsplit('/')[-1]
+        print("preparing to download : "+linksDicMovie[userSelectedLinkId])
+        print("wait a few ... ")
+        if os.path.isfile(filename):
+            print('file already exist')
         else:
-            print("something happend in when saveing file")
+            try:
+                obj = SmartDL(linksDicMovie[userSelectedLinkId], currentPath)
+                while(obj.start()):
+                     print(obj.get_status())
+                     
+            except HashFailedException:
+                print('💣 error occurred')
+                print('hash failed')
+                sys.exit()
+            except CanceledException:
+                print('bye bye ..')
+                sys.exit()
+            except HTTPError:
+                print('server error .. u may use another site next time')
+                sys.exit()
+            except URLError:
+                print('cant reach the url ! ')
+                sys.exit()
+            except IOError:
+                print('Error occurred . Do have enough space?')
+                sys.exit()
+
+            dlMoviePath = obj.get_dest()
+            if os.path.isfile(dlMoviePath):
+                print("🎬 file saved in  "+dlMoviePath)
+            else:
+                print("something happend in when saveing file")
 
 
 
