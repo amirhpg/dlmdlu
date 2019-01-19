@@ -10,7 +10,7 @@ import requests
 import os.path
 import math
 from progress.spinner import PixelSpinner
-
+from pySmartDL import SmartDL
 
 movieTable = BeautifulTable()
 
@@ -54,6 +54,7 @@ spinner = PixelSpinner('Listing Links ')
 if argResult.kind == "movie":
     for url in search(searchQuery, num=1, start=0, stop=4, lang='fa', only_standard=True):
         spinner.next()
+        print("website number"+ str(websitenumber))
         websiteUrlDetail = urlparse(url)
         websitenumber += 1
         try:
@@ -70,7 +71,6 @@ if argResult.kind == "movie":
                     movieTable.append_row([linkNumber, websiteUrlDetail.netloc, link['href'], convert_size(dlLinkSpace)])
                     linksDicMovie.update({linkNumber: link['href']})
                     linkNumber += 1
-                    #  TODO: download link  get input now
 
     print("")    
     print(movieTable)
@@ -81,7 +81,14 @@ if argResult.kind == "movie":
     if os.path.isfile(filename):
         print('file already exist')
     else:
-        print('downloading')
+        obj = SmartDL(linksDicMovie[userSelectedLinkId], currentPath)
+        obj.start()
+        dlMoviePath = obj.get_dest()
+        if os.path.isfile(dlMoviePath):
+            print("file saved in  "+dlMoviePath)
+        else:
+            print("something happend in when saveing file")
+
 
 
 #
