@@ -30,21 +30,21 @@ parser = argparse.ArgumentParser(description='Download Movie from commandline')
 parser.add_argument('-n', action='store', dest='name',
                     help='name of movie', type=str, required='true')
 parser.add_argument('-we', action='store', dest='websiteEnter',
-                    help='(default is 1) if u choose higher it get slower but chance of finding a link increse',type=int ,default=1)
+                    help='(default is 1) if u choose higher it get slower but chance of finding a link increse', type=int, default=1)
 parser.add_argument('-k', action='store', dest='kind',
                     help='movie / series Note:series is unavailble now', type=str, default='movie')
-parser.add_argument('-gc',action='store', dest='getcover',
-                    help='download cover (default is FALSE)' ,type=bool , default=0)
+parser.add_argument('-gc', action='store', dest='getcover',
+                    help='download cover (default is FALSE)', type=bool, default=0)
 parser.add_argument('-q', action='store', dest='quality',
                     help='quality (480/720/1080)', type=str, default='')
 
 argResult = parser.parse_args()
-if argResult.kind =="movie":
+if argResult.kind == "movie":
     searchQuery = "دانلود فیلم"+argResult.name
-    imgSearchQuery = "official cover for movie "+argResult.name
+    imgSearchQuery = "site:imdb.com official cover for movie "+argResult.name
 elif argResult.kind == "series":
     searchQuery = "دانلود سریال "+argResult.name
-    imgSearchQuery = "official cover for series "+argResult.name
+    imgSearchQuery = "site:imdb.com official cover for series "+argResult.name
 
 if argResult.quality:
     argResult.quality += "p"
@@ -75,21 +75,35 @@ if argResult.kind == "movie":
             if link['href'].endswith('.mkv') or link['href'].endswith('.mp4'):
                 if argResult.quality in link['href']:
                     dlLinkDetails = requests.get(link['href'], stream=True)
-                    dlLinkSpace = int(dlLinkDetails.headers.get('content-length'))
-                    movieTable.append_row([linkNumber, websiteUrlDetail.netloc, link['href'], convert_size(dlLinkSpace)])
+                    dlLinkSpace = int(
+                        dlLinkDetails.headers.get('content-length'))
+                    movieTable.append_row(
+                        [linkNumber, websiteUrlDetail.netloc, link['href'], convert_size(dlLinkSpace)])
                     linksDicMovie.update({linkNumber: link['href']})
                     linkNumber += 1
 
-    # TODO: make get cover happen
-    # if argResult.getcover:
-    #     for url in search_images(imgSearchQuery, tld='com', lang='en', tbs='0', safe='off', num=1, start=0, stop=1, domains=None, only_standard=False):
-    #         print(url)
-    # else:
-    #     pass
-    print("") 
+    #get cover happen
+    if argResult.getcover:
+        print("")
+        for url in search_images(imgSearchQuery, tld='com', lang='en', tbs='0', safe='off', num=1, start=0, stop=1, domains=None, only_standard=False):
+            websiteUrlDetail = urlparse(url)
+            try:
+                requestToUrl = urllib.request.urlopen(url).read()
+            except urllib.error.HTTPError as error:
+                print("error : check you connection")
+            
+            soup = BeautifulSoup(requestToUrl,'lxml')
+            for link in soup.find_all('img'):
+                if link['src'].endswith('.jpg'):
+                    print('Downloading cover ... ')
+                    obj = SmartDL(link['src'],currentPath)
+                    obj.start()
+                    break
+
+    print("")
     if not linksDicMovie:
         print("Nothing found ! Check your spelling and use higher -we .")
-    else:   
+    else:
         print(movieTable)
         userSelectedLinkId = int(input("enter link id :"))
         filename = linksDicMovie[userSelectedLinkId].rsplit('/')[-1]
@@ -100,9 +114,7 @@ if argResult.kind == "movie":
         else:
             try:
                 obj = SmartDL(linksDicMovie[userSelectedLinkId], currentPath)
-                while(obj.start()):
-                     print(obj.get_status())
-                     
+                obj.start()
             except HashFailedException:
                 print('💣 error occurred')
                 print('hash failed')
@@ -127,7 +139,6 @@ if argResult.kind == "movie":
                 print("something happend in when saveing file")
 
 
-
 #
 #   Movie Section Ended
 #
@@ -143,5 +154,5 @@ else:
     print("error : specify the -k (movie/series)")
 
 
-
 # TODO: error when searching for unbreakable
+# TODO: download cover subtitle for movie
