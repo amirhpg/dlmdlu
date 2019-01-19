@@ -113,7 +113,8 @@ if argResult.kind == "movie":
             print('file already exist')
         else:
             try:
-                obj = SmartDL(linksDicMovie[userSelectedLinkId], currentPath)
+                # set threads cuse its default is 5 and u have corei5 so it cant download and retrey  and fail
+                obj = SmartDL(linksDicMovie[userSelectedLinkId], currentPath,threads=2)
                 obj.start()
             except HashFailedException:
                 print('💣 error occurred')
