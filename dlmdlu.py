@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 import requests
 import os.path
 import math
-from progress.spinner import LineSpinner
+from progress.spinner import PixelSpinner
 
 
 movieTable = BeautifulTable()
@@ -50,9 +50,9 @@ linksDicMovie = {}
 
 movieTable.column_headers = ['id', 'website', 'link', 'space']
 
+spinner = PixelSpinner('Listing Links ')
 if argResult.kind == "movie":
-    spinner = LineSpinner('Listing Links ')
-    for url in search(searchQuery, num=4, start=0, stop=4, lang='fa', only_standard=True):
+    for url in search(searchQuery, num=1, start=0, stop=4, lang='fa', only_standard=True):
         spinner.next()
         websiteUrlDetail = urlparse(url)
         websitenumber += 1
@@ -63,17 +63,16 @@ if argResult.kind == "movie":
 
         soup = BeautifulSoup(requestToUrl, 'lxml')
         for link in soup.find_all('a', href=True):
-            if link['href'].endswith('.mkv'):
+            if link['href'].endswith('.mkv') or link['href'].endswith('.mp4'):
                 if argResult.quality in link['href']:
                     dlLinkDetails = requests.get(link['href'], stream=True)
-                    dlLinkSpace = int(
-                        dlLinkDetails.headers.get('content-length'))
-                    movieTable.append_row(
-                        [linkNumber, websiteUrlDetail.netloc, link['href'], convert_size(dlLinkSpace)])
+                    dlLinkSpace = int(dlLinkDetails.headers.get('content-length'))
+                    movieTable.append_row([linkNumber, websiteUrlDetail.netloc, link['href'], convert_size(dlLinkSpace)])
                     linksDicMovie.update({linkNumber: link['href']})
                     linkNumber += 1
                     #  TODO: download link  get input now
 
+    print("")    
     print(movieTable)
     userSelectedLinkId = int(input("enter link id :"))
     filename = linksDicMovie[userSelectedLinkId].rsplit('/')[-1]
