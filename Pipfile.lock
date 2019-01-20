@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f3eaa9c2fb973c675dceb0c2841fc1155b152b02b365164138278a4e574ce422"
+            "sha256": "b7538e32ea99c34f6eed85184e60121be5f7752a2999eca61baafa9674eb9b5b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -54,6 +54,19 @@
             "index": "pypi",
             "version": "==2.0.1"
         },
+        "homura": {
+            "hashes": [
+                "sha256:bf1878e4fcf46d9ae33714e403712057b43bd9cbc76748225acbbcb4061d165b"
+            ],
+            "index": "pypi",
+            "version": "==0.1.5"
+        },
+        "humanize": {
+            "hashes": [
+                "sha256:a43f57115831ac7c70de098e6ac46ac13be00d69abbf60bdcac251344785bb19"
+            ],
+            "version": "==0.5.1"
+        },
         "idna": {
             "hashes": [
                 "sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407",
@@ -100,12 +113,17 @@
             "index": "pypi",
             "version": "==2.5"
         },
-        "pysmartdl": {
+        "pycurl": {
             "hashes": [
-                "sha256:d3968ce59412f99d8e17ca532a1d949d2aa770a914e3f5eb2c0385579dc2b6b8"
+                "sha256:0f0cdfc7a92d4f2a5c44226162434e34f7d6967d3af416a6f1448649c09a25a4",
+                "sha256:10510a0016c862af467c6e069e051409f15f5831552bed03f5104b395a5d7dd1",
+                "sha256:208dd2c89e80d32a69397ba8a5cdb3bc0dc60f961a4f2a9662e5e1624dc799d1",
+                "sha256:6dc6ee5e7628400083471cba8044010860fe8b22e4dee05e42150a68047d7d9d",
+                "sha256:794bda39ea6fe434b6e1f58ab3bea9f0e6123fb43702fecd760eed6f1547b20a",
+                "sha256:dae7277e7c06da00947f3cd32c095b1e65eae09f07478ada4ea9dfa57020b646",
+                "sha256:eccea049aef47decc380746b3ff242d95636d578c907d0eab3b00918292d6c48"
             ],
-            "index": "pypi",
-            "version": "==1.2.5"
+            "version": "==7.43.0.2"
         },
         "requests": {
             "hashes": [
@@ -114,6 +132,13 @@
             ],
             "index": "pypi",
             "version": "==2.21.0"
+        },
+        "six": {
+            "hashes": [
+                "sha256:3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c",
+                "sha256:d16a0141ec1a18405cd4ce8b4613101da75da0e9a7aec5bdd4fa804d0e0eba73"
+            ],
+            "version": "==1.12.0"
         },
         "soupsieve": {
             "hashes": [

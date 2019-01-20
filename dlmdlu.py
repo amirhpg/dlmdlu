@@ -10,8 +10,8 @@ from urllib.parse import urlparse
 import requests
 import os.path
 import math
-from progress.spinner import PixelSpinner
-from pySmartDL import SmartDL
+from progress.bar import FillingCirclesBar
+from homura import download
 
 movieTable = BeautifulTable()
 
@@ -59,16 +59,15 @@ currentPath = os.path.dirname(os.path.realpath(__file__))
 linksDicMovie = {}
 
 movieTable.column_headers = ['id', 'website', 'link', 'space']
-
-spinner = PixelSpinner('Searching ... ')
+bar = FillingCirclesBar('Processing', max=20)
 if argResult.kind == "movie":
+    print("🔎 Searching ... ")
     for url in search(searchQuery, num=1, start=0, stop=argResult.websiteEnter, lang='fa', only_standard=True):
-        spinner.next()
         websiteUrlDetail = urlparse(url)
         try:
             requestToUrl = urllib.request.urlopen(url).read()
         except urllib.error.HTTPError as error:
-            print("error : check you connection")
+            print("🚨 error : check you connection")
 
         soup = BeautifulSoup(requestToUrl, 'lxml')
         for link in soup.find_all('a', href=True):
@@ -80,8 +79,10 @@ if argResult.kind == "movie":
                     movieTable.append_row(
                         [linkNumber, websiteUrlDetail.netloc, link['href'], convert_size(dlLinkSpace)])
                     linksDicMovie.update({linkNumber: link['href']})
+                    bar.next()
                     linkNumber += 1
 
+    bar.finish()
     #get cover happen
     if argResult.getcover:
         print("")
@@ -90,54 +91,50 @@ if argResult.kind == "movie":
             try:
                 requestToUrl = urllib.request.urlopen(url).read()
             except urllib.error.HTTPError as error:
-                print("error : check you connection")
+                print("🚨 error : check you connection")
             
             soup = BeautifulSoup(requestToUrl,'lxml')
             for link in soup.find_all('img'):
                 if link['src'].endswith('.jpg'):
-                    print('Downloading cover ... ')
-                    obj = SmartDL(link['src'],currentPath)
-                    obj.start()
+                    print('📥 Downloading cover ... ')
+                    download(link['src'], currentPath)
                     break
 
     print("")
     if not linksDicMovie:
-        print("Nothing found ! Check your spelling and use higher -we .")
+        print("🚦 Nothing found ! Check your spelling and use higher -we .")
     else:
         print(movieTable)
-        userSelectedLinkId = int(input("enter link id :"))
+        try:
+            userSelectedLinkId = int(input("🔗 Enter link id :"))
+        except KeyboardInterrupt:
+            print('\nby by ..')
+            sys.exit()
         filename = linksDicMovie[userSelectedLinkId].rsplit('/')[-1]
-        print("preparing to download : "+linksDicMovie[userSelectedLinkId])
-        print("wait a few ... ")
+        print("📥 preparing to download : "+linksDicMovie[userSelectedLinkId])
+        print("🚧 wait a few ... ")
         if os.path.isfile(filename):
-            print('file already exist')
+            print('🚨 file already exist')
         else:
             try:
-                # set threads cuse its default is 5 and u have corei5 so it cant download and retrey  and fail
-                obj = SmartDL(linksDicMovie[userSelectedLinkId], currentPath,threads=2)
-                obj.start()
+                download(linksDicMovie[userSelectedLinkId], currentPath)
             except HashFailedException:
                 print('💣 error occurred')
-                print('hash failed')
+                print('🚨 hash failed')
                 sys.exit()
             except CanceledException:
                 print('bye bye ..')
                 sys.exit()
             except HTTPError:
-                print('server error .. u may use another site next time')
+                print('🚨 server error .. u may use another site next time')
                 sys.exit()
             except URLError:
-                print('cant reach the url ! ')
+                print('🚨 cant reach the url ! ')
                 sys.exit()
             except IOError:
-                print('Error occurred . Do have enough space?')
+                print('🚨 Error occurred . Do have enough space?')
                 sys.exit()
-
-            dlMoviePath = obj.get_dest()
-            if os.path.isfile(dlMoviePath):
-                print("🎬 file saved in  "+dlMoviePath)
-            else:
-                print("something happend in when saveing file")
+            print("🎬 file saved")
 
 
 #
@@ -156,4 +153,5 @@ else:
 
 
 # TODO: error when searching for unbreakable
-# TODO: download cover subtitle for movie
+# TODO: download  subtitle for movie
+# TODO : cant download from sites like dibamoviez
