@@ -37,6 +37,8 @@ parser.add_argument('-gc', action='store', dest='getcover',
                     help='download cover (default is FALSE)', type=bool, default=0)
 parser.add_argument('-q', action='store', dest='quality',
                     help='quality (480/720/1080)', type=str, default='')
+parser.add_argument('-gs', action='store', dest='getsubtitle',
+                    help='get subtitle (default = False) (For now its only availble for Persian lang', type=bool , default=0)
 
 argResult = parser.parse_args()
 if argResult.kind == "movie":
@@ -48,6 +50,9 @@ elif argResult.kind == "series":
 
 if argResult.quality:
     argResult.quality += "p"
+
+if argResult.getsubtitle:
+    subSearchQuery = "site:worldsubtitle.us دانلود زیرنویس"+argResult.name
 
 opener = urllib.request.build_opener()
 opener.addheaders = [
@@ -99,6 +104,25 @@ if argResult.kind == "movie":
                     print('📥 Downloading cover ... ')
                     download(link['src'], currentPath)
                     break
+# get subtitle
+    if argResult.getsubtitle:
+        print("")
+        for url in search(subSearchQuery,num=1,start=0,stop=1,only_standard=True):
+            websiteUrlDetail = urlparse(url)
+            try:
+                requestToUrl = urllib.request.urlopen(url).read()
+            except urllib.error.HTTPError as error:
+                print("🚨 error : check you connection")
+
+            soup = BeautifulSoup(requestToUrl, 'lxml')
+            for link in soup.find_all('a', href=True):
+                if link['href'].endswith('.zip') or link['href'].endswith('.rar'):
+                    try:
+                        print('subtitle found successfully')
+                        download(link['href'])
+                    except error:
+                        print (" cant download subtitle"+error)
+                        # TODO: write exception later
 
     print("")
     if not linksDicMovie:
