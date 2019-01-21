@@ -1,6 +1,8 @@
 # dlmdlu Download Movies For Free
 ### Download movies for free just by knowing it name
 *guide in below
+you need python3 or more installed!
+
 >./dlmdlu -n "name of movie"
 
 You can select quality of movie too
@@ -13,7 +15,7 @@ then make it excutable
 >chmod +x dlmdlu
 
 install the dependenies 
->pip -r requirements.txt
+>pip3 install -r requirements.txt
 
 use script
 >./dlmdlu -n "name"
