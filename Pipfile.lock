@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b21a5ec8721f65d14fa055fbbb814aa41d98f6d53634c73326a0e5ec5c3b9dce"
+            "sha256": "6682d507750e916770b76ffe971b0e8bfe516da10dd4e0203a0a59d048fe7d14"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,6 +46,12 @@
                 "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"
             ],
             "version": "==3.0.4"
+        },
+        "docopt": {
+            "hashes": [
+                "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"
+            ],
+            "version": "==0.6.2"
         },
         "google": {
             "hashes": [
@@ -106,6 +112,14 @@
             "index": "pypi",
             "version": "==4.3.0"
         },
+        "pipreqs": {
+            "hashes": [
+                "sha256:2dfa21631cb68a97515e222d6f0033b5bfb75823567ca2195d528efb18c97990",
+                "sha256:cec6eecc4685967b27eb386037565a737d036045f525b9eb314631a68d60e4bc"
+            ],
+            "index": "pypi",
+            "version": "==0.4.9"
+        },
         "progressbar": {
             "hashes": [
                 "sha256:5d81cb529da2e223b53962afd6c8ca0f05c6670e40309a7219eacc36af9b6c63"
@@ -160,6 +174,13 @@
                 "sha256:de9529817c93f27c8ccbfead6985011db27bd0ddfcdb2d86f3f663385c6a9c22"
             ],
             "version": "==1.24.1"
+        },
+        "yarg": {
+            "hashes": [
+                "sha256:4f9cebdc00fac946c9bf2783d634e538a71c7d280a4d806d45fd4dc0ef441492",
+                "sha256:55695bf4d1e3e7f756496c36a69ba32c40d18f821e38f61d028f6049e5e15911"
+            ],
+            "version": "==0.1.9"
         }
     },
     "develop": {}

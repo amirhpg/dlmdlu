@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import argparse
 import sys
 import os
@@ -41,7 +42,7 @@ parser.add_argument('-gc', action='store', dest='getcover',
 parser.add_argument('-q', action='store', dest='quality',
                     help='quality (480/720/1080)', type=str, default='')
 parser.add_argument('-gs', action='store', dest='getsubtitle',
-                    help='get subtitle (default = False) (For now its only availble for Persian lang', type=bool , default=0)
+                    help='get subtitle (default = False) (For now its only availble for Persian lang', type=bool, default=0)
 
 argResult = parser.parse_args()
 if argResult.kind == "movie":
@@ -91,7 +92,7 @@ if argResult.kind == "movie":
                     linkNumber += 1
 
     bar.finish()
-    #get cover happen
+    # get cover happen
     if argResult.getcover:
         print("")
         for url in search_images(imgSearchQuery, tld='com', lang='en', tbs='0', safe='off', num=1, start=0, stop=1, domains=None, only_standard=False):
@@ -100,8 +101,8 @@ if argResult.kind == "movie":
                 requestToUrl = urllib.request.urlopen(url).read()
             except urllib.error.HTTPError as error:
                 print("🚨 error : check you connection")
-            
-            soup = BeautifulSoup(requestToUrl,'lxml')
+
+            soup = BeautifulSoup(requestToUrl, 'lxml')
             for link in soup.find_all('img'):
                 if link['src'].endswith('.jpg'):
                     print('📥 Downloading cover ... ')
@@ -110,7 +111,7 @@ if argResult.kind == "movie":
 # get subtitle
     if argResult.getsubtitle:
         print("")
-        for url in search(subSearchQuery,num=1,start=0,stop=1,only_standard=True):
+        for url in search(subSearchQuery, num=1, start=0, stop=1, only_standard=True):
             websiteUrlDetail = urlparse(url)
             try:
                 requestToUrl = urllib.request.urlopen(url).read()
@@ -123,9 +124,10 @@ if argResult.kind == "movie":
                     try:
                         print('subtitle found successfully')
                         download(link['href'])
-                        subtitlepath = currentPath+"/"+link['href'].rsplit('/')[-1]
+                        subtitlepath = currentPath+"/" + \
+                            link['href'].rsplit('/')[-1]
                         if subtitlepath.endswith('.zip'):
-                            unzipSubtitle = zipfile.ZipFile(subtitlepath,'r')
+                            unzipSubtitle = zipfile.ZipFile(subtitlepath, 'r')
                             unzipSubtitle.extractall(currentPath)
                             unzipSubtitle.close()
                         elif subtitlepath.endswith('.rar'):
@@ -136,7 +138,6 @@ if argResult.kind == "movie":
                         print("subtitles are ready")
                     except zipfile.BadZipFile:
                         print(" error while extractiong zip file")
-                        
 
     print("")
     if not linksDicMovie:
@@ -179,8 +180,9 @@ if argResult.kind == "movie":
 #   Movie Section Ended
 #
 elif argResult.kind == "series":
-    for url in search(searchQuery, stop=20, lang='fa', only_standard=True):
-        print(url)
+    print("-----it will be added in future swrry------")
+    # for url in search(searchQuery, stop=20, lang='fa', only_standard=True):
+    #     print(url)
 
 
 #
