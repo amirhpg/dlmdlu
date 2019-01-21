@@ -13,6 +13,7 @@ lxml = "*"
 requests = "*"
 progressbar = "*"
 homura = "*"
+rarfile = "*"
 
 [requires]
 python_version = "3.7"

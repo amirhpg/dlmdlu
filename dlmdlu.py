@@ -12,6 +12,9 @@ import os.path
 import math
 from progress.bar import FillingCirclesBar
 from homura import download
+import zipfile
+import rarfile
+
 
 movieTable = BeautifulTable()
 
@@ -120,9 +123,20 @@ if argResult.kind == "movie":
                     try:
                         print('subtitle found successfully')
                         download(link['href'])
-                    except error:
-                        print (" cant download subtitle"+error)
-                        # TODO: write exception later
+                        subtitlepath = currentPath+"/"+link['href'].rsplit('/')[-1]
+                        if subtitlepath.endswith('.zip'):
+                            unzipSubtitle = zipfile.ZipFile(subtitlepath,'r')
+                            unzipSubtitle.extractall(currentPath)
+                            unzipSubtitle.close()
+                        elif subtitlepath.endswith('.rar'):
+                            rf = rarfile.RarFile(subtitlepath)
+                            rf.extractall()
+
+                        os.remove(subtitlepath)
+                        print("subtitles are ready")
+                    except zipfile.BadZipFile:
+                        print(" error while extractiong zip file")
+                        
 
     print("")
     if not linksDicMovie:
@@ -177,5 +191,5 @@ else:
 
 
 # TODO: error when searching for unbreakable
-# TODO: download  subtitle for movie
+# TODO: need more exceeption and  cheking if file exist and such ..
 # TODO : cant download from sites like dibamoviez
